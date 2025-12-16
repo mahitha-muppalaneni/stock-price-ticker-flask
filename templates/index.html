@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Ticker</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .stock { font-size: 20px; margin: 5px 0; }
+        .up { color: green; }
+        .down { color: red; }
+        .neutral { color: black; }
+    </style>
+</head>
+<body>
+    <h2>Stock Prices</h2>
+    <div id="stocks"></div>
+
+    <script>
+        const updateInterval = 2000; // ms
+        const container = document.getElementById('stocks');
+
+        async function fetchStocks() {
+            const res = await fetch('/stocks');
+            const data = await res.json();
+            container.innerHTML = '';
+            const time = new Date().toLocaleTimeString();
+            container.innerHTML += `<p><strong>Update at ${time}</strong></p>`;
+            
+            data.forEach(stock => {
+                let className = "neutral";
+                if (stock.Arrow === "↑") className = "up";
+                if (stock.Arrow === "↓") className = "down";
+                container.innerHTML += `<div class="stock ${className}">${stock.Name}: $${stock.Price} ${stock.Arrow}</div>`;
+            });
+        }
+
+        fetchStocks(); // initial load
+        setInterval(fetchStocks, updateInterval); // repeat every 2 sec
+    </script>
+</body>
+</html>
